@@ -5,11 +5,7 @@
 #include <stdbool.h>
 #include <errno.h>
  
-#define COMPUTEMODULE4
-
-#include "BCM2711macros.h"
-
-#include "pinout.h"
+#include "hardware.h"
   
 void printHelp(){
 	 printf("\nFlash programmer help menu\n\n");
@@ -20,41 +16,13 @@ void printHelp(){
 	 fflush(stdout);
 }
 
-void setupFlashProgrammer(void){
-	
-	setup_io();
-	
-	INP_GPIO(PINWP);
-	OUT_GPIO(PINWP);
-	
-	INP_GPIO(PINHOLD);
-	OUT_GPIO(PINHOLD);
-	
-	INP_GPIO(PINSTATLED);
-	OUT_GPIO(PINSTATLED);
-	
-	INP_GPIO(PINSO);
-	OUT_GPIO(PINSO);
-	
-	INP_GPIO(PINPWRON);
-	OUT_GPIO(PINPWRON);
-	
-	INP_GPIO(PINCLK);
-	OUT_GPIO(PINCLK);
-	
-	INP_GPIO(PINCS);
-	OUT_GPIO(PINCS);
-	
-	INP_GPIO(PINSI);
-	//Serial input pin...
-}
 
-void powerOn(void){
-	GPIO_SET = (1<<PINPWRON) | (1<<PINSTATLED);
-}
 
-void powerOff(){
-	GPIO_CLR = (1<<PINPWRON) | (1<<PINSTATLED);
+void exitProgrammer(int status){
+	
+	powerOff();
+	
+	exit(status);
 }
 
 int main(int argc, char *argv[]) 
@@ -79,7 +47,7 @@ int main(int argc, char *argv[])
                 break; 
 			case 'h': 
                 printHelp();
-				exit(0);
+				exitProgrammer(0);
                 break; 
             case 'f': 
 				sprintf(inputFileName, "%s", optarg);
@@ -108,7 +76,7 @@ int main(int argc, char *argv[])
 	
 	if(!fileIsProvided){
 		printf("Program failed: Please provide a file using -f\n");
-		exit(0);
+		exitProgrammer(0);
 	}
 	
 	 FILE *inputFile;
@@ -116,7 +84,7 @@ int main(int argc, char *argv[])
 	 inputFile = fopen(inputFileName, "rb");
 	 if(inputFile == NULL){
 		 perror("Opening file failed");
-		 exit(0);
+		 exitProgrammer(0);
 	 }
 	 else if(verboseOutput){
 		 printf("Opening file was succesful\n");
