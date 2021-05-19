@@ -115,15 +115,14 @@ int main(int argc, char *argv[])
 		 fflush(stdout);
 	}
 	
-		 for (size_t i = 0; i < size; i++) {
-			 writeCS(0);
-			 softSpiTransfer(ByteArray[i]);
-			 writeCS(1);
-				if(dumpFileContents){	
-					printf("%02X ", ByteArray[i]);
-				}
-		 }
-	}
+	 for (size_t i = 0; i < size; i++) {
+		 writeCS(0);
+		 softSpiTransfer(ByteArray[i]);
+		 writeCS(1);
+			if(dumpFileContents){	
+				printf("%02X ", ByteArray[i]);
+			}
+	 }
 	  
 	free(ByteArray);
 	printf("Program is done\n");
