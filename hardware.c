@@ -1,7 +1,6 @@
 #include "hardware.h"
 #include "BCM2711macros.h"
 #include <time.h>
-#define SPISLEEP_NS 1
 
 
 void setupFlashProgrammer(void){
@@ -56,18 +55,15 @@ void writeCS(bool state){
 uint8_t softSpiTransfer(uint8_t outByte){
 	uint8_t inByte = 0;
 	
-	struct timespec delayTime;
-	delayTime.tv_sec = 0;
-	delayTime.tv_nsec = SPISLEEP_NS;
 	//read current value
 	for(uint8_t index = 0; index<8; index++){
 		if((outByte>>index) & 0x01) GPIO_SET = 1<<PINSI;
 		else GPIO_CLR = 1<<PINSI;
 
 		GPIO_CLR = 1<<PINCLK;
-		nanosleep(&delayTime, NULL);
+		for(uint16_t i = 0; i<0xFFFE; i++);
 		GPIO_SET = 1<<PINCLK;
-		nanosleep(&delayTime, NULL);
+		for(uint16_t i = 0; i<0xFFFE; i++);
 		inByte |= (GET_GPIO(PINSO)?0x01:0x00)<<index;
 	}
 	
