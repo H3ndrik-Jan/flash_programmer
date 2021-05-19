@@ -1,6 +1,6 @@
 #include "hardware.h"
 #include "BCM2711macros.h"
-
+#include <time.h>
 #define SPISLEEP_NS 100
 
 
