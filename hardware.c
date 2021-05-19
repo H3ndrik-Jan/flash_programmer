@@ -56,7 +56,8 @@ void writeCS(bool state){
 uint8_t softSpiTransfer(uint8_t outByte){
 	uint8_t inByte = 0;
 	
-	timespec delayTime = {0};
+	struct timespec delayTime;
+	delayTime.tv_sec = 0;
 	delayTime.tv_nsec = SPISLEEP_NS;
 	//read current value
 	for(uint8_t index = 0; index<8; index++){
