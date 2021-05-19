@@ -23,11 +23,11 @@ void printHelp(){
 
 
 
-void exitProgrammer(void){
-	
+void exitProgrammer(int signal){
+	if(signal == SIGINT){
 	powerOff();
-	
 	exit(0);
+	}
 }
 
 int main(int argc, char *argv[]) 
