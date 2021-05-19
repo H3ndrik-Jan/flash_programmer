@@ -52,6 +52,24 @@ void writeCS(bool state){
 	}
 }
 
+void writeWP(bool state){
+	if(state){
+		GPIO_SET = 1<<PINWP;
+	}
+	else{
+		GPIO_CLR = 1<<PINWP;
+	}
+}
+
+void writeHold(bool state){
+	if(state){
+		GPIO_SET = 1<<PINHOLD;
+	}
+	else{
+		GPIO_CLR = 1<<PINHOLD;
+	}
+}
+
 uint8_t softSpiTransfer(uint8_t outByte){
 	uint8_t inByte = 0;
 	
