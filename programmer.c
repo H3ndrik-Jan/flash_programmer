@@ -4,9 +4,13 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <errno.h>
+ #include <sys/time.h>
  
 #include "hardware.h"
   
+  
+ //Compile with: gcc programmer.c hardware.c -Wall -o prg
+ 
 void printHelp(){
 	 printf("\nFlash programmer help menu\n\n");
 	 printf("\t-d:\tDump file contents to console\n");
@@ -28,13 +32,19 @@ void exitProgrammer(int status){
 int main(int argc, char *argv[]) 
 {
     int opt;
-	setupFlashProgrammer();
-	powerOn();
+
 	char * inputFileName = malloc(sizeof(*inputFileName));
 	
 	bool fileIsProvided = false;
 	bool verboseOutput = false;
 	bool dumpFileContents = false;
+	
+	struct timeval beginTime, endTime;
+	
+	gettimeofday(&beginTime, NULL);	//get begin time
+	setupFlashProgrammer();
+	powerOn();
+	
 	
     while((opt = getopt(argc, argv, ":if:dvhx")) != -1) 
     { 
@@ -123,6 +133,12 @@ int main(int argc, char *argv[])
 			}
 	 }
 	 writeCS(1);
+	  
+	  gettimeofday(&endTime, NULL);
+
+	printf ("Execution took %f seconds\n",
+         (double) (endTime.tv_usec - beginTime.tv_usec) / 1000000 +
+         (double) (endTime.tv_sec - beginTime.tv_sec));
 	  
 	free(ByteArray);
 	printf("Program is done\n");
