@@ -1,3 +1,5 @@
+#include "hardware.h"
+
 void setupFlashProgrammer(void){
 	
 	setup_io();
