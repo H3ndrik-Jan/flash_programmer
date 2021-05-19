@@ -21,13 +21,17 @@ void printHelp(){
 	 fflush(stdout);
 }
 
-
-
-void exitProgrammer(int signal){
-	if(signal == SIGINT){
-	powerOff();
-	exit(0);
+void signalHandler(int signo){
+	if(signo == SIGINT || signo == SIGKILL || signo == SIGSTOP){
+		exitProgrammer(0);
 	}
+}
+
+void exitProgrammer(int status){
+	
+	powerOff();
+	
+	exit(status);
 }
 
 int main(int argc, char *argv[]) 
@@ -42,7 +46,7 @@ int main(int argc, char *argv[])
 	
 	struct timeval beginTime, endTime;
 	
-	signal(SIGINT, exitProgrammer);
+	signal(SIGINT, signalHandler);
 	
 	gettimeofday(&beginTime, NULL);	//get begin time
 	setupFlashProgrammer();
@@ -60,7 +64,7 @@ int main(int argc, char *argv[])
                 break; 
 			case 'h': 
                 printHelp();
-				exitProgrammer();
+				exitProgrammer(0);
                 break; 
             case 'f': 
 				sprintf(inputFileName, "%s", optarg);
@@ -89,7 +93,7 @@ int main(int argc, char *argv[])
 	
 	if(!fileIsProvided){
 		printf("Program failed: Please provide a file using -f\n");
-		exitProgrammer();
+		exitProgrammer(0);
 	}
 	
 	 FILE *inputFile;
@@ -97,7 +101,7 @@ int main(int argc, char *argv[])
 	 inputFile = fopen(inputFileName, "rb");
 	 if(inputFile == NULL){
 		 perror("Opening file failed");
-		 exitProgrammer();
+		 exitProgrammer(0);
 	 }
 	 else if(verboseOutput){
 		 printf("Opening file was succesful\n");
