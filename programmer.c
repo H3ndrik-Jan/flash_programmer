@@ -20,7 +20,7 @@ void printHelp(){
 	 fflush(stdout);
 }
 
-void setupGPIO(void){
+void setupFlashProgrammer(void){
 	
 	setup_io();
 	
@@ -60,6 +60,7 @@ void powerOff(){
 int main(int argc, char *argv[]) 
 {
     int opt;
+	setupFlashProgrammer();
 	powerOn();
 	char * inputFileName = malloc(sizeof(*inputFileName));
 	
