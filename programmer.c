@@ -21,17 +21,19 @@ void printHelp(){
 	 fflush(stdout);
 }
 
-void signalHandler(int signo){
-	if(signo == SIGINT || signo == SIGKILL || signo == SIGSTOP){
-		exitProgrammer(0);
-	}
-}
+
 
 void exitProgrammer(int status){
 	
 	powerOff();
 	
 	exit(status);
+}
+
+void signalHandler(int signo){
+	if(signo == SIGINT || signo == SIGKILL || signo == SIGSTOP){
+		exitProgrammer(0);
+	}
 }
 
 int main(int argc, char *argv[]) 
