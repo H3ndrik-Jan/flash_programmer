@@ -115,9 +115,13 @@ int main(int argc, char *argv[])
 		 fflush(stdout);
 	}
 	
-	if(dumpFileContents){	
 		 for (size_t i = 0; i < size; i++) {
-				printf("%02X ", ByteArray[i]);
+			 writeCS(0);
+			 softSpiTransfer(ByteArray[i]);
+			 writeCS(1);
+				if(dumpFileContents){	
+					printf("%02X ", ByteArray[i]);
+				}
 		 }
 	}
 	  

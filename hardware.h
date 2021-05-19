@@ -2,6 +2,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 #include "pinout.h"
 
@@ -11,3 +13,6 @@ void setupFlashProgrammer(void);
 void powerOn(void);
 
 void powerOff(void);
+
+void writeCS(bool state);
+uint8_t softSpiTransfer(uint8_t outByte);
