@@ -1,4 +1,5 @@
 #include "hardware.h"
+#include "BCM2711macros.h"
 
 void setupFlashProgrammer(void){
 	
