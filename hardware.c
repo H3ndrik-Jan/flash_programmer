@@ -61,9 +61,9 @@ uint8_t softSpiTransfer(uint8_t outByte){
 		else GPIO_CLR = 1<<PINSI;
 
 		GPIO_CLR = 1<<PINCLK;
-		for(uint16_t i = 0; i<0xFFFE; i++);
+		for(uint16_t i = 0; i<0xFF; i++);
 		GPIO_SET = 1<<PINCLK;
-		for(uint16_t i = 0; i<0xFFFE; i++);
+		for(uint16_t i = 0; i<0xFF; i++);
 		inByte |= (GET_GPIO(PINSO)?0x01:0x00)<<index;
 	}
 	
