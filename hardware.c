@@ -55,15 +55,14 @@ void writeCS(bool state){
 uint8_t softSpiTransfer(uint8_t outByte){
 	uint8_t inByte = 0;
 	
-	//read current value
 	for(uint8_t index = 0; index<8; index++){
 		if((outByte>>index) & 0x01) GPIO_SET = 1<<PINSI;
 		else GPIO_CLR = 1<<PINSI;
 
 		GPIO_CLR = 1<<PINCLK;
-		for(uint16_t i = 0; i<0xFF; i++);
+		for(uint8_t i = 0; i<0xFE; i++);	//for loop to act as delay
 		GPIO_SET = 1<<PINCLK;
-		for(uint16_t i = 0; i<0xFF; i++);
+		for(uint8_t i = 0; i<0xFE; i++);
 		inByte |= (GET_GPIO(PINSO)?0x01:0x00)<<index;
 	}
 	
