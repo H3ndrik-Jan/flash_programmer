@@ -4,7 +4,8 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <errno.h>
- #include <sys/time.h>
+#include <signal.h>
+#include <sys/time.h>
  
 #include "hardware.h"
   
@@ -22,11 +23,11 @@ void printHelp(){
 
 
 
-void exitProgrammer(int status){
+void exitProgrammer(void){
 	
 	powerOff();
 	
-	exit(status);
+	exit(0);
 }
 
 int main(int argc, char *argv[]) 
@@ -40,6 +41,8 @@ int main(int argc, char *argv[])
 	bool dumpFileContents = false;
 	
 	struct timeval beginTime, endTime;
+	
+	signal(SIGINT, exitProgrammer);
 	
 	gettimeofday(&beginTime, NULL);	//get begin time
 	setupFlashProgrammer();
@@ -57,7 +60,7 @@ int main(int argc, char *argv[])
                 break; 
 			case 'h': 
                 printHelp();
-				exitProgrammer(0);
+				exitProgrammer();
                 break; 
             case 'f': 
 				sprintf(inputFileName, "%s", optarg);
@@ -86,7 +89,7 @@ int main(int argc, char *argv[])
 	
 	if(!fileIsProvided){
 		printf("Program failed: Please provide a file using -f\n");
-		exitProgrammer(0);
+		exitProgrammer();
 	}
 	
 	 FILE *inputFile;
@@ -94,7 +97,7 @@ int main(int argc, char *argv[])
 	 inputFile = fopen(inputFileName, "rb");
 	 if(inputFile == NULL){
 		 perror("Opening file failed");
-		 exitProgrammer(0);
+		 exitProgrammer();
 	 }
 	 else if(verboseOutput){
 		 printf("Opening file was succesful\n");
