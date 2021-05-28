@@ -16,8 +16,8 @@ void setupFlashProgrammer(void){
 	INP_GPIO(PINSTATLED);
 	OUT_GPIO(PINSTATLED);
 	
-	INP_GPIO(PINSO);
-	OUT_GPIO(PINSO);
+	INP_GPIO(PINSI);
+	OUT_GPIO(PINSI);
 	
 	INP_GPIO(PINPWRON);
 	OUT_GPIO(PINPWRON);
@@ -28,7 +28,7 @@ void setupFlashProgrammer(void){
 	INP_GPIO(PINCS);
 	OUT_GPIO(PINCS);
 	
-	INP_GPIO(PINSI);
+	INP_GPIO(PINSO);
 	//Serial input pin...
 }
 
@@ -46,7 +46,6 @@ void powerOff(){
 void writeCS(bool state){
 	if(state){
 		GPIO_SET = 1<<PINCS;
-		GPIO_SET = 1<<PINSI;
 	}
 	else{
 		GPIO_CLR = 1<<PINCS;
@@ -77,13 +76,9 @@ uint8_t softSpiTransfer(uint8_t outByte){
 	for(uint8_t index = 7; index>0; index--){
 		if((outByte>>index) & 0x01){
 			GPIO_SET = 1<<PINSI;
-			GPIO_SET = 1<<PINSO;
-			GPIO_SET = 1<<PINHOLD;
 		}
 		else {
 			GPIO_CLR = 1<<PINSI;
-			GPIO_CLR = 1<<PINSO;
-			GPIO_CLR = 1<<PINHOLD;
 		}
 
 		GPIO_CLR = 1<<PINCLK;
