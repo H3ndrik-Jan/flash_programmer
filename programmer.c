@@ -171,12 +171,12 @@ int main(int argc, char *argv[])
 	size_t i = 0;
 	while(i<inFile._length-255){
 
-		uint8_t *temp = malloc(sizeof(uint8_t)*256);
+		uint8_t temp[256];
 		for(int j = 0; j<256; j++){
 			temp[j] = inFile._data[i+j];
 		}
 		enableWrite();
-		pageProgram(i, 256, &temp);
+		pageProgram(i, 256, temp);
 		i+=256;
 	}
 	
