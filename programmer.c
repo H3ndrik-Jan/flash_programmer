@@ -165,14 +165,29 @@ int main(int argc, char *argv[])
 		 fflush(stdout);
 	}
 	
-	writeCS(0);
-	 for (size_t i = 0; i < inFile._length; i++) {
-		 softSpiTransfer(inFile._data[i]);
-			if(dumpFileContents){	
-				printf("%02X ", inFile._data[i]);
-			}
-	 }
-	 writeCS(1);
+	
+	//write to flash chip
+	size_t i = 0;
+	while(i<inFile._length-255){
+
+		uint8_t temp[256];
+		for(int j = 0; j<256; j++){
+			temp[j] = inFile._data[i+j];
+		}
+		enableWrite();
+		pageProgram(i, 256, temp);
+		i+=256;
+	}
+	
+	if(i<inFile._length){
+		uint8_t remaining = inFile._length-i;
+		uint8_t temp[remaining];
+		for(int j = 0; j<remaining; j++){
+			temp[j] = inFile._data[i+j];
+		}
+		enableWrite();
+		pageProgram(i, remaining, temp);
+	}
 	
 
 	
