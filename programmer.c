@@ -183,7 +183,7 @@ int main(int argc, char *argv[])
          (double) (endTime.tv_usec - beginTime.tv_usec) / 1000000 +
          (double) (endTime.tv_sec - beginTime.tv_sec));
 	  
-	free(ByteArray);
+	//free(ByteArray);
 	printf("Program is done\n");
 	powerOff();
     return 0;
