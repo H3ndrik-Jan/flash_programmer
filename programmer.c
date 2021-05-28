@@ -46,7 +46,29 @@ typedef struct{
 	
 } filecont_t;
 
-
+void writeFile(filecont_t *inFile){
+	size_t i = 0;
+	while(i<inFile._length-255){
+		uint8_t temp[256];
+		for(int j = 0; j<256; j++){
+			temp[j] = inFile._data[i+j];
+		}
+		enableWrite();
+		pageProgram(i, 256, temp);
+		i+=256;
+		for(uint8_t i = 0; i<0xFE; i++);	//wait for a little
+	}
+	
+	if(i<inFile._length){
+		uint8_t remaining = inFile._length-i;
+		uint8_t temp[remaining];
+		for(int j = 0; j<remaining; j++){
+			temp[j] = inFile._data[i+j];
+		}
+		enableWrite();
+		pageProgram(i, remaining, temp);
+	}
+}
 
 size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	 FILE *inputFile;
@@ -166,30 +188,9 @@ int main(int argc, char *argv[])
 		 fflush(stdout);
 	}
 	
-	softSpiTransfer(0xAA);
+//	softSpiTransfer(0xAA);
 	//write to flash chip
-	size_t i = 0;
-	while(i<inFile._length-255){
-
-		uint8_t temp[256];
-		for(int j = 0; j<256; j++){
-			temp[j] = inFile._data[i+j];
-		}
-		enableWrite();
-		pageProgram(i, 256, temp);
-		i+=256;
-		for(uint8_t i = 0; i<0xFE; i++);	//wait for a little
-	}
-	
-	if(i<inFile._length){
-		uint8_t remaining = inFile._length-i;
-		uint8_t temp[remaining];
-		for(int j = 0; j<remaining; j++){
-			temp[j] = inFile._data[i+j];
-		}
-		enableWrite();
-		pageProgram(i, remaining, temp);
-	}
+	writeFile(&inFile);
 	
 
 	
