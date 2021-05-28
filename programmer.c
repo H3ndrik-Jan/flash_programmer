@@ -178,6 +178,7 @@ int main(int argc, char *argv[])
 		enableWrite();
 		pageProgram(i, 256, temp);
 		i+=256;
+		for(uint8_t i = 0; i<0xFE; i++);	//wait for a little
 	}
 	
 	if(i<inFile._length){

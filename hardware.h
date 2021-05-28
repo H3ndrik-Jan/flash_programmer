@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "pinout.h"
+
 
 
 void setupFlashProgrammer(void);

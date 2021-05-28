@@ -1,7 +1,7 @@
 #include "hardware.h"
 #include "BCM2711macros.h"
 #include <time.h>
-
+#include "pinout.h"
 
 void setupFlashProgrammer(void){
 	
