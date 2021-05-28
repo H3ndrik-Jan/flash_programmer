@@ -45,6 +45,8 @@ void readData(uint32_t address, uint32_t length, uint8_t data[]){
 
 void pageProgram(uint32_t address, uint32_t length, uint8_t data[]){
 	writeCS(0);
+	for(uint8_t i = 0; i<0xFE; i++);
+	for(uint8_t i = 0; i<0xFE; i++);
 	softSpiTransfer(CMD_PP);
 	softSpiTransfer((address>>16) & 0xFF);
 	softSpiTransfer((address>>8) & 0xFF);
