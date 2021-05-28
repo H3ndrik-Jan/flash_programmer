@@ -69,7 +69,7 @@ size_t readFileToBuffer(char inputFileName[], uint8_t ByteArray[], bool verboseO
 
 	fclose(inputFile);
 	
-	return size;
+	return succesBytes;
 }
 
 int main(int argc, char *argv[]) 
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 		exitProgrammer(0);
 	}
 	
-	uint8_t *ByteArray;
+	uint8_t *ByteArray = 0;
 	size_t size = readFileToBuffer(inputFileName, ByteArray, verboseOutput);
 
 	 
