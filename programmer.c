@@ -177,6 +177,9 @@ int main(int argc, char *argv[])
 	
 		//read flash (to file)
 	if(readTheFlashPlease){
+		printf("Reading flash contents\n");
+		fflush(stdout);
+		
 		uint8_t inBuffer[FLASH_SIZE];
 		readData(0,FLASH_SIZE,inBuffer);
 		
