@@ -155,6 +155,7 @@ int main(int argc, char *argv[])
 	}
 	
 	filecont_t inFile;
+	inFile._fileName = malloc(sizeof(char)*100);
 	sprintf(inFile._fileName , "%s", inputFileName);
 	//fileSize = getFileSize(inputFileName);
 	printf("copied filename: %s\n", inFile._fileName);
