@@ -139,7 +139,7 @@ int main(int argc, char *argv[])
 	}
 	
 	uint8_t *ByteArray;
-	size_t size = readFileToBuffer(&inputFileName, &ByteArray, verboseOutput);
+	size_t size = readFileToBuffer(inputFileName, ByteArray, verboseOutput);
 
 	 
 	if(verboseOutput){
