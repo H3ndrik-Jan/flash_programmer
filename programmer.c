@@ -36,10 +36,26 @@ void signalHandler(int signo){
 	}
 }
 
-size_t readFileToBuffer(char inputFileName[], uint8_t ByteArray[], bool verboseOutput){
+
+typedef struct{
+	
+	uint8_t *_data;
+	char * _fileName;
+	size_t _length;
+	
+} filecont_t;
+
+
+size_t getFileSize(char inputFileName[]){
+	 fseek(inputFile, 0L, SEEK_END);
+	 return ftell(inputFile);
+}
+
+
+size_t readFileToBuffer(filecont_t myFile, bool verboseOutput){
 	 FILE *inputFile;
 	 
-	 inputFile = fopen(inputFileName, "rb");
+	 inputFile = fopen(myFile->_fileName, "rb");
 	 if(inputFile == NULL){
 		 perror("Opening file failed");
 		 exitProgrammer(0);
@@ -48,24 +64,24 @@ size_t readFileToBuffer(char inputFileName[], uint8_t ByteArray[], bool verboseO
 		 printf("Opening file was succesful\n");
 		 fflush(stdout);
 	 }
-	 free(inputFileName);
+	 
 	 
 	 fseek(inputFile, 0L, SEEK_END);
-	 size_t size = ftell(inputFile);
+	 myFile->_length = ftell(inputFile);
 	 fseek(inputFile, 0L, SEEK_SET);
 	 if(verboseOutput){
-		 printf("File length: %I64u\n", size);
+		 printf("File length: %I64u\n", myFile->_length);
 		 fflush(stdout);
 	 }
 	 
-	 ByteArray = malloc(sizeof(uint8_t)*size);
+	 myFile->_data = malloc(sizeof(uint8_t)*myFile->_length);
 	 
 	if(verboseOutput){
 		 printf("Allocated local buffer\n");
 		 fflush(stdout);
 	}
 	 
-	 size_t succesBytes = fread(ByteArray, sizeof(uint8_t), size, inputFile);
+	 size_t succesBytes = fread(myFile->_data, sizeof(uint8_t), myFile->_length, inputFile);
 
 	fclose(inputFile);
 	
@@ -138,9 +154,13 @@ int main(int argc, char *argv[])
 		exitProgrammer(0);
 	}
 	
-	uint8_t *ByteArray = 0;
-	size_t size = readFileToBuffer(inputFileName, ByteArray, verboseOutput);
+	filecont_t *inFile;
+	sprintf(inFile->_fileName , "%s", inputFileName);
+	//fileSize = getFileSize(inputFileName);
+	//uint8_t *ByteArray = malloc(sizeof(uint8_t)*fileSize);
+	size_t size = readFileToBuffer(&inFile, verboseOutput);
 
+	free(inputFileName);
 	 
 	if(verboseOutput){
 		 printf("Copied %I64u bytes from file to local buffer\n", size);
