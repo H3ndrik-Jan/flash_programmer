@@ -8,6 +8,7 @@
 #include <sys/time.h>
  
 #include "hardware.h"
+#include "flash.h"
   
   
  //Compile with: gcc programmer.c hardware.c -Wall -o prg
