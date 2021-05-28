@@ -36,7 +36,7 @@ void signalHandler(int signo){
 	}
 }
 
-size_t readFileToBuffer(char inputFileName, uint8_t ByteArray, bool verboseOutput){
+size_t readFileToBuffer(char inputFileName[], uint8_t ByteArray[], bool verboseOutput){
 	 FILE *inputFile;
 	 
 	 inputFile = fopen(inputFileName, "rb");
