@@ -46,11 +46,6 @@ typedef struct{
 } filecont_t;
 
 
-/* size_t getFileSize(char inputFileName[]){
-	 fseek(inputFile, 0L, SEEK_END);
-	 return ftell(inputFile);
-} */
-
 
 size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	 FILE *inputFile;
@@ -171,7 +166,7 @@ int main(int argc, char *argv[])
 	}
 	
 	writeCS(0);
-	 for (size_t i = 0; i < size; i++) {
+	 for (size_t i = 0; i < inFile._length; i++) {
 		 softSpiTransfer(inFile._data[i]);
 			if(dumpFileContents){	
 				printf("%02X ", inFile._data[i]);
