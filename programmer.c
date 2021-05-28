@@ -84,7 +84,7 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	 size_t succesBytes = fread(myFile->_data, sizeof(uint8_t), myFile->_length, inputFile);
 
 	fclose(inputFile);
-	free(ByteArray);
+	//free(ByteArray);
 	return succesBytes;
 }
 
