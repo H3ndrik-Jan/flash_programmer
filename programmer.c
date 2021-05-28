@@ -84,7 +84,7 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	 size_t succesBytes = fread(myFile->_data, sizeof(uint8_t), myFile->_length, inputFile);
 
 	fclose(inputFile);
-	
+	free(ByteArray);
 	return succesBytes;
 }
 
@@ -157,6 +157,8 @@ int main(int argc, char *argv[])
 	filecont_t inFile;
 	sprintf(inFile._fileName , "%s", inputFileName);
 	//fileSize = getFileSize(inputFileName);
+	printf("copied filename: %s\n", inFile._fileName);
+	fflush(stdout);
 	//uint8_t *ByteArray = malloc(sizeof(uint8_t)*fileSize);
 	size_t size = readFileToBuffer(&inFile, verboseOutput);
 
