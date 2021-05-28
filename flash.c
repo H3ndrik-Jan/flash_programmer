@@ -5,7 +5,7 @@ uint8_t readStatusRegister(void){
 	softSpiTransfer(CMD_RDSR);
 	uint8_t status = softSpiTransfer(0x00);
 	writeCS(1);
-	return status
+	return status;
 }
 
 uint8_t writeStatusRegister(uint8_t data){
@@ -13,7 +13,7 @@ uint8_t writeStatusRegister(uint8_t data){
 	softSpiTransfer(CMD_WRSR);
 	uint8_t status = softSpiTransfer(data);
 	writeCS(1);
-	return status
+	return status;
 }
 
 void enableWrite(void){
