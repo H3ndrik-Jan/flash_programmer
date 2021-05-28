@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
 	bool fileIsProvided = false;
 	bool verboseOutput = false;
 	bool dumpFileContents = false;
+	bool readTheFlashPlease = false;
 	
 	struct timeval beginTime, endTime;
 	
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
 	powerOn();
 	
 	
-    while((opt = getopt(argc, argv, ":if:dpvhx")) != -1) 
+    while((opt = getopt(argc, argv, ":if:drpvhx")) != -1) 
     { 
         switch(opt) 
         { 
@@ -139,7 +140,9 @@ int main(int argc, char *argv[])
 				exitProgrammer(0);
                 break; 
 			case 'p':
-					
+				break;
+			case 'r':
+					readTheFlashPlease = true;
 				break;
             case 'f': 
 				sprintf(inputFileName, "%s", optarg);
@@ -167,18 +170,28 @@ int main(int argc, char *argv[])
 	fflush(stdout);
 	
 	
-	if(!fileIsProvided){
-		printf("Program failed: Please provide a file using -f\n");
+	if(!fileIsProvided && !readTheFlashPlease){
+		printf("Program failed: Please provide a file using either -f or -r\n");
 		exitProgrammer(0);
 	}
 	
+		//read flash (to file)
+	if(readTheFlashPlease){
+		uint8_t inBuffer[FLASH_SIZE];
+		readData(0,FLASH_SIZE,inBuffer);
+		
+		FILE *outFile;
+		outFile = fopen("output.bin","wb");  // write binary file
+		fwrite(inBuffer,sizeof(inBuffer),1,outFile);
+		fclose(outFile);
+	}
+	
+	//write file to flash
+	if(fileIsProvided){
 	filecont_t inFile;
-	inFile._fileName = malloc(sizeof(char)*100);
+	inFile._fileName = malloc(sizeof(char)*100);	//beunmanier :-(
 	sprintf(inFile._fileName , "%s", inputFileName);
-	//fileSize = getFileSize(inputFileName);
-	printf("copied filename: %s\n", inFile._fileName);
 	fflush(stdout);
-	//uint8_t *ByteArray = malloc(sizeof(uint8_t)*fileSize);
 	size_t size = readFileToBuffer(&inFile, verboseOutput);
 
 	free(inputFileName);
@@ -188,10 +201,9 @@ int main(int argc, char *argv[])
 		 fflush(stdout);
 	}
 	
-//	softSpiTransfer(0xAA);
-	//write to flash chip
 	writeFile(&inFile);
-	
+	}
+
 
 	
 	gettimeofday(&endTime, NULL);

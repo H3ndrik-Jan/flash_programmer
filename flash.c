@@ -51,8 +51,6 @@ void pageProgram(uint32_t address, uint32_t length, uint8_t data[]){
 	
 	for(uint32_t i = 0; i<length; i++){
 		softSpiTransfer(data[i]);
-		printf("%d\t", data[i]);
-		fflush(stdout);
 	}
 	
 	writeCS(1);

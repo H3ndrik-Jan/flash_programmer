@@ -23,6 +23,8 @@
 #define CMD_RDID 0x9F
 #endif
 
+#define FLASH_SIZE 512000
+
 uint8_t readStatusRegister(void);
 uint8_t writeStatusRegister(uint8_t data);
 
