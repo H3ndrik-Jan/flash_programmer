@@ -72,8 +72,9 @@ void writeHold(bool state){
 
 uint8_t softSpiTransfer(uint8_t outByte){
 	uint8_t inByte = 0;
-	for(uint8_t i = 0; i<0xFE; i++);
-	for(uint8_t index = 7; index>0; index--){
+	for(uint8_t i = 0; i<0xFE; i++);//wait
+	
+	for(int8_t index = 7; index>=0; index--){
 		if((outByte>>index) & 0x01){
 			GPIO_SET = 1<<PINSI;
 		}
