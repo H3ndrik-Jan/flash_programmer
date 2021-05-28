@@ -36,7 +36,7 @@ void signalHandler(int signo){
 	}
 }
 
-size_t readFileToBuffer(char *inputFileName, uint8_t *ByteArray){
+size_t readFileToBuffer(char inputFileName, uint8_t ByteArray, bool verboseOutput){
 	 FILE *inputFile;
 	 
 	 inputFile = fopen(inputFileName, "rb");
@@ -69,7 +69,7 @@ size_t readFileToBuffer(char *inputFileName, uint8_t *ByteArray){
 
 	fclose(inputFile);
 	
-	return succesBytes;
+	return size;
 }
 
 int main(int argc, char *argv[]) 
@@ -139,11 +139,11 @@ int main(int argc, char *argv[])
 	}
 	
 	uint8_t *ByteArray;
-	size_t succesBytes = readFileToBuffer(&inputFileName, &ByteArray);
+	size_t size = readFileToBuffer(&inputFileName, &ByteArray, verboseOutput);
 
 	 
 	if(verboseOutput){
-		 printf("Copied %I64u bytes from file to local buffer\n", succesBytes);
+		 printf("Copied %I64u bytes from file to local buffer\n", size);
 		 fflush(stdout);
 	}
 	
