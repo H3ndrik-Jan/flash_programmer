@@ -46,13 +46,13 @@ typedef struct{
 } filecont_t;
 
 
-size_t getFileSize(char inputFileName[]){
+/* size_t getFileSize(char inputFileName[]){
 	 fseek(inputFile, 0L, SEEK_END);
 	 return ftell(inputFile);
-}
+} */
 
 
-size_t readFileToBuffer(filecont_t myFile, bool verboseOutput){
+size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	 FILE *inputFile;
 	 
 	 inputFile = fopen(myFile->_fileName, "rb");
@@ -154,8 +154,8 @@ int main(int argc, char *argv[])
 		exitProgrammer(0);
 	}
 	
-	filecont_t *inFile;
-	sprintf(inFile->_fileName , "%s", inputFileName);
+	filecont_t inFile;
+	sprintf(inFile._fileName , "%s", inputFileName);
 	//fileSize = getFileSize(inputFileName);
 	//uint8_t *ByteArray = malloc(sizeof(uint8_t)*fileSize);
 	size_t size = readFileToBuffer(&inFile, verboseOutput);
@@ -169,9 +169,9 @@ int main(int argc, char *argv[])
 	
 	writeCS(0);
 	 for (size_t i = 0; i < size; i++) {
-		 softSpiTransfer(ByteArray[i]);
+		 softSpiTransfer(inFile._data[i]);
 			if(dumpFileContents){	
-				printf("%02X ", ByteArray[i]);
+				printf("%02X ", inFile._data[i]);
 			}
 	 }
 	 writeCS(1);
