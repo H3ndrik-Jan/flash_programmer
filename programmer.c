@@ -36,6 +36,42 @@ void signalHandler(int signo){
 	}
 }
 
+size_t readFileToBuffer(char *inputFileName, uint8_t *ByteArray){
+	 FILE *inputFile;
+	 
+	 inputFile = fopen(inputFileName, "rb");
+	 if(inputFile == NULL){
+		 perror("Opening file failed");
+		 exitProgrammer(0);
+	 }
+	 else if(verboseOutput){
+		 printf("Opening file was succesful\n");
+		 fflush(stdout);
+	 }
+	 free(inputFileName);
+	 
+	 fseek(inputFile, 0L, SEEK_END);
+	 size_t size = ftell(inputFile);
+	 fseek(inputFile, 0L, SEEK_SET);
+	 if(verboseOutput){
+		 printf("File length: %I64u\n", size);
+		 fflush(stdout);
+	 }
+	 
+	 ByteArray = malloc(sizeof(uint8_t)*size);
+	 
+	if(verboseOutput){
+		 printf("Allocated local buffer\n");
+		 fflush(stdout);
+	}
+	 
+	 size_t succesBytes = fread(ByteArray, sizeof(uint8_t), size, inputFile);
+
+	fclose(inputFile);
+	
+	return succesBytes;
+}
+
 int main(int argc, char *argv[]) 
 {
     int opt;
@@ -55,7 +91,7 @@ int main(int argc, char *argv[])
 	powerOn();
 	
 	
-    while((opt = getopt(argc, argv, ":if:dvhx")) != -1) 
+    while((opt = getopt(argc, argv, ":if:dpvhx")) != -1) 
     { 
         switch(opt) 
         { 
@@ -68,6 +104,9 @@ int main(int argc, char *argv[])
                 printHelp();
 				exitProgrammer(0);
                 break; 
+			case 'p':
+					
+				break;
             case 'f': 
 				sprintf(inputFileName, "%s", optarg);
 				printf("Opening file: %s\n", inputFileName); 
@@ -93,41 +132,15 @@ int main(int argc, char *argv[])
     }
 	fflush(stdout);
 	
+	
 	if(!fileIsProvided){
 		printf("Program failed: Please provide a file using -f\n");
 		exitProgrammer(0);
 	}
 	
-	 FILE *inputFile;
-	 
-	 inputFile = fopen(inputFileName, "rb");
-	 if(inputFile == NULL){
-		 perror("Opening file failed");
-		 exitProgrammer(0);
-	 }
-	 else if(verboseOutput){
-		 printf("Opening file was succesful\n");
-		 fflush(stdout);
-	 }
-	 free(inputFileName);
-	 
-	 fseek(inputFile, 0L, SEEK_END);
-	 size_t size = ftell(inputFile);
-	 fseek(inputFile, 0L, SEEK_SET);
-	 if(verboseOutput){
-		 printf("File length: %I64u\n", size);
-		 fflush(stdout);
-	 }
-	 uint8_t* ByteArray = malloc(sizeof(uint8_t)*size);
-	 
-	if(verboseOutput){
-		 printf("Allocated local buffer\n");
-		 fflush(stdout);
-	}
-	 
-	 size_t succesBytes = fread(ByteArray, sizeof(uint8_t), size, inputFile);
+	uint8_t *ByteArray;
+	size_t succesBytes = readFileToBuffer(&inputFileName, &ByteArray);
 
-	fclose(inputFile);
 	 
 	if(verboseOutput){
 		 printf("Copied %I64u bytes from file to local buffer\n", succesBytes);
@@ -142,9 +155,10 @@ int main(int argc, char *argv[])
 			}
 	 }
 	 writeCS(1);
-	  
-	  gettimeofday(&endTime, NULL);
+	
 
+	
+	gettimeofday(&endTime, NULL);
 	printf ("Execution took %f seconds\n",
          (double) (endTime.tv_usec - beginTime.tv_usec) / 1000000 +
          (double) (endTime.tv_sec - beginTime.tv_sec));
