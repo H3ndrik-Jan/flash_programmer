@@ -166,7 +166,7 @@ int main(int argc, char *argv[])
 		 fflush(stdout);
 	}
 	
-	
+	softSpiTransfer(0xAA);
 	//write to flash chip
 	size_t i = 0;
 	while(i<inFile._length-255){
