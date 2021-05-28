@@ -46,6 +46,7 @@ void powerOff(){
 void writeCS(bool state){
 	if(state){
 		GPIO_SET = 1<<PINCS;
+		GPIO_SET = 1<<PINSI;
 	}
 	else{
 		GPIO_CLR = 1<<PINCS;
