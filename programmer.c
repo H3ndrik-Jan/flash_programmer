@@ -189,14 +189,16 @@ int main(int argc, char *argv[])
 	
 	
 	if(!fileIsProvided && !readTheFlashPlease){
-		printf("Program failed: Please provide a file using either -f or -r\n");
+		printf("Program failed: Please provide at least a read (-r) or write (-f <filename>) argument\n");
 		exitProgrammer(0);
 	}
 	
 		//read flash (to file)
 	if(readTheFlashPlease){
+		if(verboseOutput){
 		printf("Reading flash contents\n");
 		fflush(stdout);
+		}
 		
 		uint8_t inBuffer[FLASH_SIZE];
 		readData(0,FLASH_SIZE,inBuffer);
@@ -207,6 +209,12 @@ int main(int argc, char *argv[])
 		outFile = fopen("output.bin","wb");  // write binary file
 		fwrite(inBuffer,sizeof(inBuffer),1,outFile);
 		fclose(outFile);
+		
+		if(dumpFileContents){
+			for(size_t i = 0; i<FLASH_SIZE; i++){
+				printf("%d ", inBuffer[i]);
+			}
+		}
 	}
 	
 	//write file to flash
@@ -224,15 +232,16 @@ int main(int argc, char *argv[])
 		}
 
 		writeFile(&inFile);
-		
-		if(verifyFlash(&inFile)){
-			printf("Flash contents verified\n");
+		if(verboseOutput){
+			printf("Wrote the local buffer to the flash\n");
 			fflush(stdout);
 		}
-	
+		
+		if(verifyFlash(&inFile)){
+			printf("Written flash contents verified and OK\n");
+			fflush(stdout);
+		}
 	}
-
-
 	
 	gettimeofday(&endTime, NULL);
 	printf ("Execution took %f seconds\n",
