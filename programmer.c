@@ -71,6 +71,7 @@ void writeFile(filecont_t *inFile){
 		while(readStatusRegister() & 0x01) usleep(1);
 		enableWrite();
 		pageProgram(i, remaining, temp);
+		while(readStatusRegister() & 0x01) usleep(1);
 	}
 }
 
