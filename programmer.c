@@ -53,9 +53,8 @@ void writeFile(filecont_t *inFile){
 		for(int j = 0; j<256; j++){
 			temp[j] = inFile->_data[i+j];
 		}
-		while(readStatusRegister() & 0x01){	//ensure that WIP is low
-			usleep(1);
-		}
+		
+		while(readStatusRegister() & 0x01) usleep(1);	//ensure that WIP is low
 		enableWrite();
 		pageProgram(i, 256, temp);
 		i+=256;
@@ -68,6 +67,8 @@ void writeFile(filecont_t *inFile){
 		for(int j = 0; j<remaining; j++){
 			temp[j] = inFile->_data[i+j];
 		}
+		
+		while(readStatusRegister() & 0x01) usleep(1);
 		enableWrite();
 		pageProgram(i, remaining, temp);
 	}
