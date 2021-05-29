@@ -211,24 +211,25 @@ int main(int argc, char *argv[])
 	
 	//write file to flash
 	if(fileIsProvided){
-	filecont_t inFile;
-	inFile._fileName = malloc(sizeof(char)*100);	//beunmanier :-(
-	sprintf(inFile._fileName , "%s", inputFileName);
-	fflush(stdout);
-	size_t size = readFileToBuffer(&inFile, verboseOutput);
-	free(inputFileName);
-	 
-	if(verboseOutput){
-		 printf("Copied %I64u bytes from file to local buffer\n", size);
-		 fflush(stdout);
-	}
-	
-	if(verifyFlash(&inFile)){
-		printf("Flash contents verified\n");
+		filecont_t inFile;
+		inFile._fileName = malloc(sizeof(char)*100);	//beunmanier :-(
+		sprintf(inFile._fileName , "%s", inputFileName);
 		fflush(stdout);
-	}
+		size_t size = readFileToBuffer(&inFile, verboseOutput);
+		free(inputFileName);
+		 
+		if(verboseOutput){
+			 printf("Copied %I64u bytes from file to local buffer\n", size);
+			 fflush(stdout);
+		}
+
+		writeFile(&inFile);
+		
+		if(verifyFlash(&inFile)){
+			printf("Flash contents verified\n");
+			fflush(stdout);
+		}
 	
-	writeFile(&inFile);
 	}
 
 
