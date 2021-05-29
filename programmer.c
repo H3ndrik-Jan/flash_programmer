@@ -17,7 +17,7 @@ void printHelp(){
 	 printf("\nFlash programmer help menu\n\n");
 	 printf("\t-d:\tDump file contents to console\n");
 	 printf("\t-v:\tEnable verbose output\n");
-	 printf("\t-f:\tFilename\n");
+	 printf("\t-f <filename>:\tWrite file to flash\n");
 	 printf("\t-h:\tPrint this help menu\n");
 	 fflush(stdout);
 }
@@ -93,7 +93,7 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	 myFile->_length = ftell(inputFile);
 	 fseek(inputFile, 0L, SEEK_SET);
 	 if(verboseOutput){
-		 printf("File length: %I64u\n", myFile->_length);
+		 printf("File length: %zu\n", myFile->_length);
 		 fflush(stdout);
 	 }
 	 
@@ -114,14 +114,16 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 bool verifyFlash(filecont_t *pFile){
 		uint8_t inBuffer[FLASH_SIZE];
 		readData(0,FLASH_SIZE,inBuffer);
+		bool succes = true;
 		for(size_t i = 0; i< pFile->_length; i++){
 			if(inBuffer[i] != pFile->_data[i]){
-				printf("Found mismatch at byte %I64u!\nWriting the flash did likely not succeed\n", i);
+				printf("Found mismatch at byte %zu!\nWriting the flash did likely not succeed\n", i);
 				fflush(stdout);
-				return false;
+				succes = false;
+				break;
 			}
 		}
-	return true;
+	return succes;
 }
 
 int main(int argc, char *argv[]) 
@@ -171,7 +173,6 @@ int main(int argc, char *argv[])
                 printf("option needs a value\n"); 
 				printHelp();
                 break; 
-				
 			default:
             case '?': 
                 printf("unknown option: %c\n", optopt);
@@ -227,7 +228,7 @@ int main(int argc, char *argv[])
 		free(inputFileName);
 		 
 		if(verboseOutput){
-			 printf("Copied %I64u bytes from file to local buffer\n", size);
+			 printf("Copied %zu bytes from file to local buffer\n", size);
 			 fflush(stdout);
 		}
 
