@@ -218,13 +218,14 @@ int main(int argc, char *argv[])
 	size_t size = readFileToBuffer(&inFile, verboseOutput);
 	free(inputFileName);
 	 
-	if(verifyFlash(&inFile){
-		printf("Flash contents verified\n");
-		fflush(stdout);
-	}
 	if(verboseOutput){
 		 printf("Copied %I64u bytes from file to local buffer\n", size);
 		 fflush(stdout);
+	}
+	
+	if(verifyFlash(&inFile)){
+		printf("Flash contents verified\n");
+		fflush(stdout);
 	}
 	
 	writeFile(&inFile);
