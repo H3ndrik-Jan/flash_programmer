@@ -111,6 +111,19 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	return succesBytes;
 }
 
+bool verifyFlash(filecont_t *pFile){
+		uint8_t inBuffer[FLASH_SIZE];
+		readData(0,FLASH_SIZE,inBuffer);
+		for(size_t i = 0; i< pFile->_length; i++){
+			if(inBuffer[i] != pFile->_data[i]){
+				printf("Found mismatch at byte %I64u!\nWriting the flash did likely not succeed\n", i);
+				fflush(stdout);
+				return false;
+			}
+		}
+	return true;
+}
+
 int main(int argc, char *argv[]) 
 {
     int opt;
@@ -189,6 +202,8 @@ int main(int argc, char *argv[])
 		readData(0,FLASH_SIZE,inBuffer);
 		
 		FILE *outFile;
+		printf("Writing flash contents to file\n");
+		fflush(stdout);
 		outFile = fopen("output.bin","wb");  // write binary file
 		fwrite(inBuffer,sizeof(inBuffer),1,outFile);
 		fclose(outFile);
@@ -201,9 +216,12 @@ int main(int argc, char *argv[])
 	sprintf(inFile._fileName , "%s", inputFileName);
 	fflush(stdout);
 	size_t size = readFileToBuffer(&inFile, verboseOutput);
-
 	free(inputFileName);
 	 
+	if(verifyFlash(&inFile){
+		printf("Flash contents verified\n");
+		fflush(stdout);
+	}
 	if(verboseOutput){
 		 printf("Copied %I64u bytes from file to local buffer\n", size);
 		 fflush(stdout);
