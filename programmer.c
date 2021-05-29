@@ -11,13 +11,14 @@
 #include "flash.h"
   
   
- //Compile with: gcc programmer.c hardware.c -Wall -o prg
+ //Compile with: gcc programmer.c hardware.c flash.c -Wall -o prg
  
 void printHelp(){
 	 printf("\nFlash programmer help menu\n\n");
 	 printf("\t-d:\tDump file contents to console\n");
 	 printf("\t-v:\tEnable verbose output\n");
 	 printf("\t-f <filename>:\tWrite file to flash\n");
+	 printf("\t-r:\tRead the flash and write this to a file\n");
 	 printf("\t-h:\tPrint this help menu\n");
 	 fflush(stdout);
 }
@@ -111,8 +112,12 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	return succesBytes;
 }
 
-bool verifyFlash(filecont_t *pFile){
+bool verifyFlash(filecont_t *pFile, bool verboseOutput){
 		uint8_t inBuffer[FLASH_SIZE];
+		if(verboseOutput){
+			printf("Reading back the flash contents to verify the content\n");
+			fflush(stdout);
+		}
 		readData(0,FLASH_SIZE,inBuffer);
 		bool succes = true;
 		for(size_t i = 0; i< pFile->_length; i++){
@@ -238,14 +243,14 @@ int main(int argc, char *argv[])
 			fflush(stdout);
 		}
 		
-		if(verifyFlash(&inFile)){
+		if(verifyFlash(&inFile, verboseOutput)){
 			printf("Written flash contents verified and OK\n");
 			fflush(stdout);
 		}
 	}
 	
 	gettimeofday(&endTime, NULL);
-	printf ("Execution took %f seconds\n",
+	printf ("\nExecution took %f seconds\n",
          (double) (endTime.tv_usec - beginTime.tv_usec) / 1000000 +
          (double) (endTime.tv_sec - beginTime.tv_sec));
 	  
