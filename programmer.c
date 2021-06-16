@@ -11,14 +11,13 @@
 #include "flash.h"
   
   
- //Compile with: gcc programmer.c hardware.c flash.c -Wall -o prg
+ //Compile with: gcc programmer.c hardware.c -Wall -o prg
  
 void printHelp(){
 	 printf("\nFlash programmer help menu\n\n");
 	 printf("\t-d:\tDump file contents to console\n");
 	 printf("\t-v:\tEnable verbose output\n");
-	 printf("\t-f <filename>:\tWrite file to flash\n");
-	 printf("\t-r:\tRead the flash and write this to a file\n");
+	 printf("\t-f:\tFilename\n");
 	 printf("\t-h:\tPrint this help menu\n");
 	 fflush(stdout);
 }
@@ -94,7 +93,7 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	 myFile->_length = ftell(inputFile);
 	 fseek(inputFile, 0L, SEEK_SET);
 	 if(verboseOutput){
-		 printf("File length: %zu\n", myFile->_length);
+		 printf("File length: %I64u\n", myFile->_length);
 		 fflush(stdout);
 	 }
 	 
@@ -110,25 +109,6 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	fclose(inputFile);
 	//free(ByteArray);
 	return succesBytes;
-}
-
-bool verifyFlash(filecont_t *pFile, bool verboseOutput){
-		uint8_t inBuffer[FLASH_SIZE];
-		if(verboseOutput){
-			printf("Reading back the flash contents to verify the content\n");
-			fflush(stdout);
-		}
-		readData(0,FLASH_SIZE,inBuffer);
-		bool succes = true;
-		for(size_t i = 0; i< pFile->_length; i++){
-			if(inBuffer[i] != pFile->_data[i]){
-				printf("Found mismatch at byte %zu!\nWriting the flash did likely not succeed\n", i);
-				fflush(stdout);
-				succes = false;
-				break;
-			}
-		}
-	return succes;
 }
 
 int main(int argc, char *argv[]) 
@@ -178,6 +158,7 @@ int main(int argc, char *argv[])
                 printf("option needs a value\n"); 
 				printHelp();
                 break; 
+				
 			default:
             case '?': 
                 printf("unknown option: %c\n", optopt);
@@ -195,62 +176,46 @@ int main(int argc, char *argv[])
 	
 	
 	if(!fileIsProvided && !readTheFlashPlease){
-		printf("Program failed: Please provide at least a read (-r) or write (-f <filename>) argument\n");
+		printf("Program failed: Please provide a file using either -f or -r\n");
 		exitProgrammer(0);
 	}
 	
 		//read flash (to file)
 	if(readTheFlashPlease){
-		if(verboseOutput){
 		printf("Reading flash contents\n");
 		fflush(stdout);
-		}
 		
 		uint8_t inBuffer[FLASH_SIZE];
 		readData(0,FLASH_SIZE,inBuffer);
 		
 		FILE *outFile;
-		printf("Writing flash contents to file\n");
-		fflush(stdout);
 		outFile = fopen("output.bin","wb");  // write binary file
 		fwrite(inBuffer,sizeof(inBuffer),1,outFile);
 		fclose(outFile);
-		
-		if(dumpFileContents){
-			for(size_t i = 0; i<FLASH_SIZE; i++){
-				printf("%d ", inBuffer[i]);
-			}
-		}
 	}
 	
 	//write file to flash
 	if(fileIsProvided){
-		filecont_t inFile;
-		inFile._fileName = malloc(sizeof(char)*100);	//beunmanier :-(
-		sprintf(inFile._fileName , "%s", inputFileName);
-		fflush(stdout);
-		size_t size = readFileToBuffer(&inFile, verboseOutput);
-		free(inputFileName);
-		 
-		if(verboseOutput){
-			 printf("Copied %zu bytes from file to local buffer\n", size);
-			 fflush(stdout);
-		}
+	filecont_t inFile;
+	inFile._fileName = malloc(sizeof(char)*100);	//beunmanier :-(
+	sprintf(inFile._fileName , "%s", inputFileName);
+	fflush(stdout);
+	size_t size = readFileToBuffer(&inFile, verboseOutput);
 
-		writeFile(&inFile);
-		if(verboseOutput){
-			printf("Wrote the local buffer to the flash\n");
-			fflush(stdout);
-		}
-		
-		if(verifyFlash(&inFile, verboseOutput)){
-			printf("Written flash contents verified and OK\n");
-			fflush(stdout);
-		}
+	free(inputFileName);
+	 
+	if(verboseOutput){
+		 printf("Copied %I64u bytes from file to local buffer\n", size);
+		 fflush(stdout);
 	}
 	
+	writeFile(&inFile);
+	}
+
+
+	
 	gettimeofday(&endTime, NULL);
-	printf ("\nExecution took %f seconds\n",
+	printf ("Execution took %f seconds\n",
          (double) (endTime.tv_usec - beginTime.tv_usec) / 1000000 +
          (double) (endTime.tv_sec - beginTime.tv_sec));
 	  
