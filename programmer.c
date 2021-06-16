@@ -63,7 +63,7 @@ void writeFile(filecont_t *inFile){
 			fflush(stdout);
 			usleep(100000);
 		}*/
-		printf("hebben jullie WEL beeld?\n");
+		//printf("hebben jullie WEL beeld?\n");
 		//ensure that WEL is high
 		pageProgram(i, 256, temp);
 		i+=256;
