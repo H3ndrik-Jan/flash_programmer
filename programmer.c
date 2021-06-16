@@ -56,7 +56,10 @@ void writeFile(filecont_t *inFile){
 		}
 		
 		while(readStatusRegister() & 0x01) usleep(1);	//ensure that WIP is low
+		
 		enableWrite();
+		printf("heb write geenabled\n");
+		fflush(stdout);
 		//for(uint8_t i = 0; i<255; i++);
 		while(!(readStatusRegister() & 0x02)) usleep(1);
 		printf("hebben jullie WEL beeld?\n");
