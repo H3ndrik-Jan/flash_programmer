@@ -66,8 +66,9 @@ void writeFile(filecont_t *inFile){
 		//printf("hebben jullie WEL beeld?\n");
 		//ensure that WEL is high
 		pageProgram(i, 256, temp);
+		
 		i+=256;
-		for(uint8_t i = 0; i<0xFE; i++);	//wait for a little
+		for(uint8_t s = 0; s<0xFE; s++);	//wait for a little
 	}
 	
 	if(i<inFile->_length){
