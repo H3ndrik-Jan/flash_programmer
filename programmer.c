@@ -207,7 +207,11 @@ int main(int argc, char *argv[])
 	if(verboseOutput){
 		 printf("Copied %I64u bytes from file to local buffer\n", size);
 		 fflush(stdout);
+		 for(uint16_t abc= 0; abc<1000; abc++){
+			 printf("%02X ", inFile->_data[abc]);
+		 }
 	}
+	
 	
 	writeFile(&inFile);
 	}
