@@ -106,7 +106,7 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 		 fflush(stdout);
 	 }
 	 
-	 myFile->_data = malloc(sizeof(uint8_t)*myFile->_length);
+	 myFile->_data = calloc(myFile->_length, sizeof(uint8_t));
 	 
 	if(verboseOutput){
 		 printf("Allocated local buffer\n");
