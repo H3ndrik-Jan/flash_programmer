@@ -65,10 +65,14 @@ void writeFile(filecont_t *inFile){
 		}*/
 		//printf("hebben jullie WEL beeld?\n");
 		//ensure that WEL is high
+		for(int k = 0; k<256; k++){
+			printf("0x%02X ", temp[k]);
+		}
 		pageProgram(i, 256, temp);
 		
 		i+=256;
-		for(uint8_t s = 0; s<0xFE; s++);	//wait for a little
+		i = inFile->_length;
+		for(int s = 0; s<0xFE; s++);	//wait for a little
 	}
 	
 	if(i<inFile->_length){
