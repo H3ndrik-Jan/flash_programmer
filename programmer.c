@@ -57,7 +57,17 @@ void writeFile(filecont_t *inFile){
 		
 		while(readStatusRegister() & 0x01) usleep(1);	//ensure that WIP is low
 		
+		static bool printDebug = true;
+		
 		enableWrite();
+		while(!(readStatusRegister() & 0x02)) {
+			usleep(100);
+			enableWrite();
+		}
+		if(printDebug){
+			printDebug = false;
+			printf("0x%02X ",readStatusRegister());
+		}
 		/*while(1){
 			printf("0x%02X ", readStatusRegister());
 			fflush(stdout);
@@ -65,13 +75,12 @@ void writeFile(filecont_t *inFile){
 		}*/
 		//printf("hebben jullie WEL beeld?\n");
 		//ensure that WEL is high
-		for(int k = 0; k<256; k++){
+		/*for(int k = 0; k<256; k++){
 			printf("0x%02X ", temp[k]);
-		}
+		}*/
 		pageProgram(i, 256, temp);
 		
 		i+=256;
-		i = inFile->_length;
 		for(int s = 0; s<0xFE; s++);	//wait for a little
 	}
 	
