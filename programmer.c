@@ -78,6 +78,7 @@ void writeFile(filecont_t *inFile){
 		/*for(int k = 0; k<256; k++){
 			printf("0x%02X ", temp[k]);
 		}*/
+		enableWrite();
 		pageProgram(i, 256, temp);
 		
 		i+=256;
