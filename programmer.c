@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
 	
 	//write file to flash
 	if(fileIsProvided){
-		filecont_t inFile = malloc(sizeof(filecont_t));
+		filecont_t inFile;
 		inFile._fileName = malloc(sizeof(char)*100);	//beunmanier :-(
 		sprintf(inFile._fileName , "%s", inputFileName);
 		fflush(stdout);
