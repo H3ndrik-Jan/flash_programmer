@@ -83,9 +83,9 @@ uint8_t softSpiTransfer(uint8_t outByte){
 		}
 
 		GPIO_CLR = 1<<PINCLK;
-		for(uint8_t i = 0; i<70; i++);	//for loop to act as delay
+		for(uint8_t i = 0; i<30; i++);	//for loop to act as delay
 		GPIO_SET = 1<<PINCLK;
-		for(uint8_t i = 0; i<70; i++);
+		for(uint8_t i = 0; i<30; i++);
 		inByte<<=1;
 		inByte |= (GET_GPIO(PINSO)?0x01:0x00);
 	}
