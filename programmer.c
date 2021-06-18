@@ -120,7 +120,7 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 		 fflush(stdout);
 	 }
 	 
-	 myFile->_data = calloc(myFile->_length, sizeof(uint8_t));
+	 myFile->_data = malloc(myFile->_length*2);
 	 
 	if(verboseOutput){
 		 printf("Allocated local buffer\n");
@@ -247,7 +247,7 @@ int main(int argc, char *argv[])
 	
 	//write file to flash
 	if(fileIsProvided){
-		filecont_t inFile;
+		filecont_t inFile = malloc(sizeof(filecont_t));
 		inFile._fileName = malloc(sizeof(char)*100);	//beunmanier :-(
 		sprintf(inFile._fileName , "%s", inputFileName);
 		fflush(stdout);
