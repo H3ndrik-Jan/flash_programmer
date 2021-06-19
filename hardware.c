@@ -35,12 +35,13 @@ void setupFlashProgrammer(void){
 void powerOn(void){
 	GPIO_SET = (1<<PINPWRON) | (1<<PINSTATLED);
 	usleep(1);
-	GPIO_SET = (1<<PINCS) | (1<<PINCLK) ;
+	GPIO_SET = (1<<PINCS) | (1<<PINCLK) | (1<<PINHOLD) | (1<<PINWP);
 	
 }
 
 void powerOff(){
-	GPIO_CLR = (1<<PINPWRON) | (1<<PINSTATLED) | (1<<PINCS) | (1<<PINHOLD) | (1<<PINSO) | (1<<PINCLK) | (1<<PINWP);
+	GPIO_CLR = 	(1<<PINPWRON) | (1<<PINSTATLED) | (1<<PINCS) | 
+						(1<<PINHOLD) | (1<<PINSO) | (1<<PINCLK) | (1<<PINWP);
 }
 
 void writeCS(bool state){

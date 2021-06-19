@@ -1,3 +1,10 @@
+//programmer.c
+//Program to read/erase/write 8-pin SPI flash chips. 
+//The program is written on the XT25F04B datasheet.
+//
+//19-06-2021, Hendrik-Jan
+//Compile with: gcc programmer.c hardware.c flash.c -Wall -o prg
+ 
 #include <stdio.h> 
 #include <unistd.h> 
 #include <stdlib.h>
@@ -9,9 +16,6 @@
  
 #include "hardware.h"
 #include "flash.h"
-  
-  
- //Compile with: gcc programmer.c hardware.c flash.c -Wall -o prg
  
 void printHelp(){
 	 printf("\nFlash programmer help menu\n\n");
@@ -25,11 +29,8 @@ void printHelp(){
 }
 
 
-
 void exitProgrammer(int status){
-	
 	powerOff();
-	
 	exit(status);
 }
 
@@ -60,30 +61,21 @@ void writeFile(filecont_t *inFile){
 		
 		static bool printDebug = true;
 		
-		enableWrite();
-		while(!(readStatusRegister() & 0x02)) {
+		static uint8_t tries = 0
+		while(!(readStatusRegister() & 0x02)) {	//ensure that WEL is low
 			usleep(100);
 			enableWrite();
+			if(tries>15){
+				printf("Write Enable Latch (WEL) bit not becoming high; aborting.\n Either the connections are bad or the otp-bits are set.\n");
+				exitProgrammer(0);
+			}
 		}
-		if(printDebug){
-			printDebug = false;
-			printf("Status register: 0x%02X\n",readStatusRegister());
-		}
-		/*while(1){
-			printf("0x%02X ", readStatusRegister());
-			fflush(stdout);
-			usleep(100000);
-		}*/
-		//printf("hebben jullie WEL beeld?\n");
-		//ensure that WEL is high
-		/*for(int k = 0; k<256; k++){
-			printf("0x%02X ", temp[k]);
-		}*/
+		
 		enableWrite();
 		pageProgram(i, 256, temp);
 		
 		i+=256;
-		for(int s = 0; s<70; s++);	//wait for a little
+		for(int s = 0; s<40; s++);	//wait for a little
 	}
 	
 	if(i<inFile->_length){
@@ -113,7 +105,6 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 		 fflush(stdout);
 	 }
 	 
-	 
 	 fseek(inputFile, 0L, SEEK_END);
 	 myFile->_length = ftell(inputFile);
 	 fseek(inputFile, 0L, SEEK_SET);
@@ -132,7 +123,6 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 	 size_t succesBytes = fread(myFile->_data, sizeof(uint8_t), myFile->_length, inputFile);
 
 	fclose(inputFile);
-	//free(ByteArray);
 	return succesBytes;
 }
 
@@ -171,8 +161,6 @@ int main(int argc, char *argv[])
 	signal(SIGINT, signalHandler);
 	
 	gettimeofday(&beginTime, NULL);	//get begin time
-	setupFlashProgrammer();
-	powerOn();
 	
 	
     while((opt = getopt(argc, argv, ":if:drpvhx")) != -1) 
@@ -181,18 +169,13 @@ int main(int argc, char *argv[])
         { 
             case 'i': eraseChip = true; break;
             case 'd': dumpFileContents = true; break;
-            case 'v': 
-                verboseOutput = true;
-                break; 
+            case 'v': verboseOutput = true; break; 
 			case 'h': 
                 printHelp();
 				exitProgrammer(0);
                 break; 
-			case 'p':
-				break;
-			case 'r':
-					readTheFlashPlease = true;
-				break;
+			case 'p': break;
+			case 'r': readTheFlashPlease = true; break;
             case 'f': 
 				sprintf(inputFileName, "%s", optarg);
 				printf("Opening file: %s\n", inputFileName); 
@@ -210,10 +193,8 @@ int main(int argc, char *argv[])
         } 
     } 
       
-    // optind is for the extra arguments
-    // which are not parsed
     for(; optind < argc; optind++){     
-        printf("extra arguments: %s\n", argv[optind]); 
+        printf("unknown arguments: %s\n", argv[optind]); 
     }
 	fflush(stdout);
 	
@@ -222,6 +203,9 @@ int main(int argc, char *argv[])
 		printf("Program failed: Please provide at least a read (-r) or write (-f <filename>) argument\n");
 		exitProgrammer(0);
 	}
+	
+	setupFlashProgrammer();
+	powerOn();
 	
 		//read flash (to file)
 	if(readTheFlashPlease){
@@ -234,7 +218,7 @@ int main(int argc, char *argv[])
 		readData(0,FLASH_SIZE,inBuffer);
 		
 		FILE *outFile;
-		printf("Writing flash contents to file\n");
+		printf("Writing flash contents to file \"output.bin\"\n");
 		fflush(stdout);
 		outFile = fopen("output.bin","wb");  // write binary file
 		fwrite(inBuffer,sizeof(inBuffer),1,outFile);
@@ -248,6 +232,11 @@ int main(int argc, char *argv[])
 	}
 	
 	if(eraseChip){
+		
+		if(verboseOutput){
+		printf("Erasing current flash contents\n");
+		fflush(stdout);
+		}
 		while(readStatusRegister() & 0x01) usleep(1);	//ensure that WIP is low
 		enableWrite();
 		while(!(readStatusRegister() & 0x02)) {
@@ -269,9 +258,6 @@ int main(int argc, char *argv[])
 		if(verboseOutput){
 			 printf("Copied %zu bytes from file to local buffer\n", size);
 			 fflush(stdout);
-	//		  for(uint16_t abc= 0; abc<1000; abc++){
-	//			printf("%02X ", inFile._data[abc]);
-	//		}
 		}
 
 		writeFile(&inFile);
@@ -293,7 +279,6 @@ int main(int argc, char *argv[])
          (double) (endTime.tv_usec - beginTime.tv_usec) / 1000000 +
          (double) (endTime.tv_sec - beginTime.tv_sec));
 	  
-	//free(ByteArray);
 	printf("Program is done\n");
 	powerOff();
     return 0;

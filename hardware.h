@@ -6,8 +6,6 @@
 #include <stdbool.h>
 
 
-
-
 void setupFlashProgrammer(void);
 
 void powerOn(void);
