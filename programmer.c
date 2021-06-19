@@ -59,9 +59,7 @@ void writeFile(filecont_t *inFile){
 		
 		while(readStatusRegister() & 0x01) usleep(1);	//ensure that WIP is low
 		
-		static bool printDebug = true;
-		
-		static uint8_t tries = 0
+		static uint8_t tries = 0;
 		while(!(readStatusRegister() & 0x02)) {	//ensure that WEL is low
 			usleep(100);
 			enableWrite();
