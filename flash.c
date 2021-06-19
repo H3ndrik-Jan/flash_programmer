@@ -28,6 +28,12 @@ void disableWrite(void){
 	writeCS(1);
 }
 
+void chipErase(void){
+	writeCS(0);
+	softSpiTransfer(CMD_CE);
+	writeCS(1);
+}
+
 void readData(uint32_t address, uint32_t length, uint8_t data[]){
 	writeCS(0);
 	for(uint8_t i = 0; i<0xFE; i++);

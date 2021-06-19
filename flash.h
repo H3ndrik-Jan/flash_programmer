@@ -31,5 +31,7 @@ uint8_t writeStatusRegister(uint8_t data);
 void enableWrite(void);
 void disableWrite(void);
 
+void chipErase(void);
+
 void readData(uint32_t address, uint32_t length, uint8_t data[]);
 void pageProgram(uint32_t address, uint32_t length, uint8_t data[]);

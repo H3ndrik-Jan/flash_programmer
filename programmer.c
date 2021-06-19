@@ -19,6 +19,7 @@ void printHelp(){
 	 printf("\t-v:\tEnable verbose output\n");
 	 printf("\t-f <filename>:\tWrite file to flash\n");
 	 printf("\t-r:\tRead the flash and write this to a file\n");
+	 printf("\t-i:\tErase all data of the chip\n");
 	 printf("\t-h:\tPrint this help menu\n");
 	 fflush(stdout);
 }
@@ -164,7 +165,7 @@ int main(int argc, char *argv[])
 	bool verboseOutput = false;
 	bool dumpFileContents = false;
 	bool readTheFlashPlease = false;
-	
+	bool eraseChip = false;
 	struct timeval beginTime, endTime;
 	
 	signal(SIGINT, signalHandler);
@@ -178,7 +179,7 @@ int main(int argc, char *argv[])
     { 
         switch(opt) 
         { 
-            case 'i': break;
+            case 'i': eraseChip = true; break;
             case 'd': dumpFileContents = true; break;
             case 'v': 
                 verboseOutput = true;
@@ -244,6 +245,16 @@ int main(int argc, char *argv[])
 				printf("%d ", inBuffer[i]);
 			}
 		}
+	}
+	
+	if(eraseChip){
+		while(readStatusRegister() & 0x01) usleep(1);	//ensure that WIP is low
+		enableWrite();
+		while(!(readStatusRegister() & 0x02)) {
+			usleep(100);
+			enableWrite();
+		}
+		chipErase();
 	}
 	
 	//write file to flash
