@@ -83,7 +83,7 @@ void writeFile(filecont_t *inFile){
 		pageProgram(i, 256, temp);
 		
 		i+=256;
-		for(int s = 0; s<0xFE; s++);	//wait for a little
+		for(int s = 0; s<70; s++);	//wait for a little
 	}
 	
 	if(i<inFile->_length){
@@ -122,7 +122,7 @@ size_t readFileToBuffer(filecont_t *myFile, bool verboseOutput){
 		 fflush(stdout);
 	 }
 	 
-	 myFile->_data = malloc(myFile->_length*2);
+	 myFile->_data = malloc(myFile->_length*sizeof(uint8_t));
 	 
 	if(verboseOutput){
 		 printf("Allocated local buffer\n");
@@ -284,6 +284,8 @@ int main(int argc, char *argv[])
 			printf("Written flash contents verified and OK\n");
 			fflush(stdout);
 		}
+		free(inFile._fileName);
+		free(inFile._data);
 	}
 	
 	gettimeofday(&endTime, NULL);

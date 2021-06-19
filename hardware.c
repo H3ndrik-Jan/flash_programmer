@@ -72,7 +72,7 @@ void writeHold(bool state){
 
 uint8_t softSpiTransfer(uint8_t outByte){
 	uint8_t inByte = 0;
-	for(uint8_t i = 0; i<0xFE; i++);//wait
+	for(uint8_t i = 0; i<70; i++);//wait
 	
 	for(int8_t index = 7; index>=0; index--){
 		if((outByte>>index) & 0x01){
@@ -83,9 +83,9 @@ uint8_t softSpiTransfer(uint8_t outByte){
 		}
 
 		GPIO_CLR = 1<<PINCLK;
-		for(uint8_t i = 0; i<30; i++);	//for loop to act as delay
+		for(uint8_t i = 0; i<15; i++);	//for loop to act as delay
 		GPIO_SET = 1<<PINCLK;
-		for(uint8_t i = 0; i<30; i++);
+		for(uint8_t i = 0; i<15; i++);
 		inByte<<=1;
 		inByte |= (GET_GPIO(PINSO)?0x01:0x00);
 	}
